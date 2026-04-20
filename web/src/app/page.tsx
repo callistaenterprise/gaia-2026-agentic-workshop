@@ -23,9 +23,9 @@ const TOOL_LABELS: Record<string, string> = {
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
+  const [threadId, setThreadId] = useState<string>(() => crypto.randomUUID());
 
-  const transport = new DefaultChatTransport({ api: "/api/chat" });
-
+  const transport = new DefaultChatTransport({ api: "/api/chat", body: { threadId } });
   const { messages, setMessages, sendMessage, status } = useChat({ transport });
 
   const isLoading = status === "streaming" || status === "submitted";
@@ -35,7 +35,11 @@ export default function ChatPage() {
       <div className="flex items-center justify-between px-4 py-3 border-b">
         <h1 className="font-semibold">Chat</h1>
         <button
-          onClick={() => setMessages([])}
+          onClick={() => {
+            const newId = crypto.randomUUID();
+            setThreadId(newId);
+            setMessages([]);
+          }}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Clear history

@@ -4,27 +4,14 @@ import { mastra } from "@/mastra";
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
-  const { messages } = await req.json();
+  const { messages, threadId } = await req.json();
 
   const agent = mastra.getAgent("chatAgent");
 
-  const hasMemory = agent.hasOwnMemory();
-
-  const toCoreMessage = (msg: { role: string; content?: string; parts?: { type: string; text?: string }[] }) => ({
-    role: msg.role as "user" | "assistant",
-    content: msg.content ?? msg.parts?.filter(p => p.type === "text").map(p => p.text ?? "").join("") ?? "",
-  });
-
-  const allCoreMessages = messages.map(toCoreMessage);
-  const messagesToSend = hasMemory ? [allCoreMessages[allCoreMessages.length - 1]] : allCoreMessages;
-
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      const result = await agent.stream(messagesToSend, {
-        memory: { thread: "workshop-thread", resource: "workshop-user" },
-        providerOptions: {
-          google: { thinkingConfig: { thinkingBudget: 0 } },
-        },
+      const result = await agent.stream(messages, {
+        memory: { thread: threadId, resource: "default-user" },
       });
       const reader = result.fullStream.getReader();
 
