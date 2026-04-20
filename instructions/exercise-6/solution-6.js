@@ -2,7 +2,6 @@ import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
-import { z } from "zod";
 import { createTool } from "@mastra/core/tools";
 import { eventAgent } from "./eventAgent";
 import { participantAgent } from "./participantAgent";
@@ -74,11 +73,9 @@ including the relevant details (e.g. names, dates, list of participants). Do not
       workingMemory: {
         enabled: true,
         scope: "resource",
-        schema: z.object({
-          userProfile: z.object({
-            name: z.string().nullable().describe("The name of the chat user, if known"),
-          }),
-        }),
+        template: `# User Profile
+        - **Name**: {{name}}
+        `,
       },
     },
   }),

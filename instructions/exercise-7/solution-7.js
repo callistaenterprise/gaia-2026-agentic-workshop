@@ -3,7 +3,6 @@ import { Agent } from "@mastra/core/agent";
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
 import { snacksMcpServer } from "../mcp/snacksMcp";
-import { z } from "zod";
 import { createTool } from "@mastra/core/tools";
 import { eventAgent } from "./eventAgent";
 import { participantAgent } from "./participantAgent";
@@ -73,5 +72,14 @@ including the relevant details (e.g. names, dates, list of participants). Do not
       id: "chat-agent-memory",
       url: "file:../db/chat-agent.db",
     }),
+    options: {
+      workingMemory: {
+        enabled: true,
+        scope: "resource",
+        template: `# User Profile
+        - **Name**: {{name}}
+        `,
+      },
+    },
   }),
 });
