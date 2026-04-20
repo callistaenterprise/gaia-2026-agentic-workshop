@@ -63,6 +63,17 @@ export const chatAgent = new Agent({
       id: "chat-agent-memory",
       url: "file:../db/chat-agent.db",
     }),
+    options: {
+      workingMemory: {
+        enabled: true,
+        scope: "resource",
+        schema: z.object({
+          userProfile: z.object({
+            name: z.string().nullable().describe("The name of the chat user, if known"),
+          }),
+        }),
+      },
+    },
   }),
 });
 ```
