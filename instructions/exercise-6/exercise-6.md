@@ -117,7 +117,12 @@ For any request related to participants (searching, creating, updating, deleting
 
 After completing any task, give a single brief summary of what was done (one or two sentences). Do not narrate individual tool call steps.
 
-If you learn the user's name during the conversation, store it in memory.`,
+If you learn the user's name during the conversation, store it in memory.
+
+IMPORTANT: You MUST always write a text response to the user after every tool call. Never finish silently.
+After completing any task, always give a brief summary of the results (one or two sentences)
+including the relevant details (e.g. names, dates, list of participants). Do not narrate individual toll call steps.
+`,
 ```
 
 ## 4. Test in the UI
