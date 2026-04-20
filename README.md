@@ -145,4 +145,4 @@ That’s it! You’re now prepared to dive into the workshop. See you there!
 
 # Workshop
 
-Links to the exercises will be posted here one day before the workshop begins.
+[&#x25B6; Click here to proceed to Exercise 1](./instructions/exercise-1/exercise-1.md)
