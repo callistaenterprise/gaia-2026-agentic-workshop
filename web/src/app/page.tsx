@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { DefaultChatTransport, DynamicToolUIPart } from "ai";
 import { useChat } from "@ai-sdk/react";
 import { Button } from "@/components/ui/button";
@@ -21,23 +21,10 @@ const TOOL_LABELS: Record<string, string> = {
   updateOrderTool: "Updating order",
 };
 
-function getOrCreateThreadId(): string {
-  if (typeof window === "undefined") return "";
-  const stored = localStorage.getItem("chat-thread-id");
-  if (stored) return stored;
-  const id = crypto.randomUUID();
-  localStorage.setItem("chat-thread-id", id);
-  return id;
-}
-
 export default function ChatPage() {
   const [input, setInput] = useState("");
-  const [threadId, setThreadId] = useState<string>(() => getOrCreateThreadId());
 
-  const transport = useMemo(
-    () => new DefaultChatTransport({ api: "/api/chat", body: { threadId } }),
-    [threadId]
-  );
+  const transport = new DefaultChatTransport({ api: "/api/chat" });
 
   const { messages, setMessages, sendMessage, status } = useChat({ transport });
 
@@ -48,12 +35,7 @@ export default function ChatPage() {
       <div className="flex items-center justify-between px-4 py-3 border-b">
         <h1 className="font-semibold">Chat</h1>
         <button
-          onClick={() => {
-            const newId = crypto.randomUUID();
-            localStorage.setItem("chat-thread-id", newId);
-            setThreadId(newId);
-            setMessages([]);
-          }}
+          onClick={() => setMessages([])}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Clear history
