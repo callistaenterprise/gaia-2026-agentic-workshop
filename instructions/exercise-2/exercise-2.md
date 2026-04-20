@@ -27,6 +27,7 @@ You will see that the agent has a placeholder model (`NOT_SPECIFIED`) and empty 
 Replace `NOT_SPECIFIED` with `GEMINI_DEFAULT` and add instructions:
 
 ```ts
+import { Agent } from "@mastra/core/agent";
 import { google } from "@ai-sdk/google";
 import { GEMINI_DEFAULT } from "../../lib/geminiModels";
 

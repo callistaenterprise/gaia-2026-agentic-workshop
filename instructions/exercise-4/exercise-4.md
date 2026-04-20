@@ -78,6 +78,37 @@ export const chatAgent = new Agent({
 });
 ```
 
+## 2b. Pass `threadId` and `resource` to the agent in the API route
+
+For memory to work, each call to `agent.stream()` must tell Mastra **which thread** (conversation) and **which resource** (user) the message belongs to.
+
+Open [web/src/app/api/chat/route.ts](../../web/src/app/api/chat/route.ts) and update the handler so that:
+
+1. `threadId` is extracted from the request body.
+2. Both `thread` and `resource` are forwarded to `agent.stream()`.
+
+```ts
+export async function POST(req: Request) {
+  const { messages, threadId } = await req.json();
+
+  const agent = mastra.getAgent("chatAgent");
+
+  const stream = createUIMessageStream({
+    execute: async ({ writer }) => {
+      const result = await agent.stream(messages, {
+        memory: { thread: threadId, resource: "default-user" },
+      });
+      // ... rest of stream handling unchanged ...
+    },
+  });
+
+  return createUIMessageStreamResponse({ stream });
+}
+```
+
+> **`thread`** is the conversation ID — the chat UI already generates a stable `threadId` per session and sends it with every request.  
+> **`resource`** identifies the user. Using `"default-user"` is fine for a single-user demo; in production you would pass the authenticated user's ID here so each user has their own working memory.
+
 ## 3. Verify memory works
 
 Tell the agent your name:
