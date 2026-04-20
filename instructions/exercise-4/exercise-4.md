@@ -15,7 +15,7 @@ Mastra's [`Memory`](https://mastra.ai/docs/memory/overview) module solves this b
 | Mechanism | What it stores | Scope |
 |---|---|---|
 | **Message history** | The raw back-and-forth messages | Per thread |
-| **Working memory** | Structured facts the agent writes to and reads from (e.g. user name) | Per thread or global |
+| **Working memory** | Structured facts the agent writes to and reads from (e.g. user name); defined as a markdown template | Per thread or global |
 
 **Key trade-offs to keep in mind:**
 - Including more history = better context, but more tokens per request (= higher cost and latency)
@@ -47,7 +47,6 @@ Open [web/src/mastra/agents/chatAgent.ts](../../web/src/mastra/agents/chatAgent.
 ```ts
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
-import z from "zod";
 
 export const chatAgent = new Agent({
   // ... existing config ...
@@ -55,7 +54,6 @@ export const chatAgent = new Agent({
     You help users create and look up events, manage participants, and handle snack orders.
     If the user asks about topics unrelated to events or participants, politely let them know that is outside your scope.
     If you learn the user's name during the conversation, store it in memory.
-    IMPORTANT: When calling updateWorkingMemory, always pass the memory argument as a plain object (not a JSON string).
     IMPORTANT: You MUST always write a text response to the user after every tool call. Never finish silently.
     After completing any task, always give a brief summary of the results (one or two sentences)
     including the relevant details (e.g. names, dates, list of participants). Do not narrate individual toll call steps.
@@ -69,11 +67,9 @@ export const chatAgent = new Agent({
       workingMemory: {
         enabled: true,
         scope: "resource",
-        schema: z.object({
-          userProfile: z.object({
-            name: z.string().nullable().describe("The name of the chat user, if known"),
-          }),
-        }),
+        template: `# User Profile
+        - **Name**: {{name}}
+        `,
       },
     },
   }),
@@ -108,7 +104,7 @@ export async function POST(req: Request) {
 }
 ```
 
-> **`thread`** is the conversation ID — the chat UI already generates a stable `threadId` per session and sends it with every request.  
+> **`thread`** is the conversation ID — the chat UI already generates a `threadId` per page view and sends it with every request.  
 > **`resource`** identifies the user. Using `"default-user"` is fine for a single-user demo; in production you would pass the authenticated user's ID here so each user has their own working memory.
 
 ## 3. Verify memory works
