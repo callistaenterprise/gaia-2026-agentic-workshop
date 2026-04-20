@@ -4,6 +4,7 @@ import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
 import { eventTools } from "../tools/eventTools";
 import { participantTools } from "../tools/participantTools";
+import { z } from "zod";
 import { GEMINI_DEFAULT } from "../../lib/geminiModels";
 
 export const chatAgent = new Agent({
@@ -27,5 +28,16 @@ export const chatAgent = new Agent({
       id: "chat-agent-memory",
       url: "file:../db/chat-agent.db",
     }),
+    options: {
+      workingMemory: {
+        enabled: true,
+        scope: "resource",
+        schema: z.object({
+          userProfile: z.object({
+            name: z.string().nullable().describe("The name of the chat user, if known"),
+          }),
+        }),
+      },
+    },
   }),
 });

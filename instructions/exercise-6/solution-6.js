@@ -70,5 +70,16 @@ including the relevant details (e.g. names, dates, list of participants). Do not
       id: "chat-agent-memory",
       url: "file:../db/chat-agent.db",
     }),
+    options: {
+      workingMemory: {
+        enabled: true,
+        scope: "resource",
+        schema: z.object({
+          userProfile: z.object({
+            name: z.string().nullable().describe("The name of the chat user, if known"),
+          }),
+        }),
+      },
+    },
   }),
 });
