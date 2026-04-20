@@ -3,6 +3,7 @@ import { Agent } from "@mastra/core/agent";
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
 import { createTool } from "@mastra/core/tools";
+import { z } from "zod";
 import { eventAgent } from "./eventAgent";
 import { participantAgent } from "./participantAgent";
 import { eventOutputSchema, participantOutputSchema } from "../tools/schemas";

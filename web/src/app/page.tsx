@@ -99,6 +99,31 @@ export default function ChatPage() {
                 </div>
               )}
 
+              {textParts.length === 0 && message.role === "assistant" && toolParts.some(t => t.state === "output-available" && (t.output as { message?: string })?.message) && (
+                <div className="flex justify-start">
+                  <div className="max-w-[75%] rounded-2xl px-4 py-2 text-sm bg-muted text-foreground">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-0.5">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-0.5">{children}</ol>,
+                        li: ({ children }) => <li>{children}</li>,
+                        strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                        em: ({ children }) => <em className="italic">{children}</em>,
+                        code: ({ children }) => <code className="bg-black/10 rounded px-1 py-0.5 text-xs font-mono">{children}</code>,
+                        pre: ({ children }) => <pre className="bg-black/10 rounded p-2 text-xs font-mono overflow-x-auto mb-2">{children}</pre>,
+                        h1: ({ children }) => <h1 className="font-bold text-base mb-1">{children}</h1>,
+                        h2: ({ children }) => <h2 className="font-bold mb-1">{children}</h2>,
+                        h3: ({ children }) => <h3 className="font-semibold mb-1">{children}</h3>,
+                      }}
+                    >
+                      {toolParts.filter(t => t.state === "output-available").map(t => (t.output as { message?: string })?.message).filter(Boolean).join("\n\n")}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              )}
+
               {textParts.map((part, i) => (
                 <div
                   key={i}
