@@ -17,9 +17,16 @@ function buildReviewPrompt(state: OrderWorkflowState): string {
 
   return `You are reviewing a snack order for an event.
 
-  Instructions from the user: "${state.instructions}"
-  YOUR INSTRUCTIONS HERE
-`;
+Instructions from the user: "${state.instructions}"
+
+Current order:
+${participantSummary}
+
+Total cost: ${state.totalCost} kr
+Number of different snack types: ${state.noOfSnackTypes}
+Average customer satisfaction: ${state.customerSatisfaction.toFixed(2)} / 5 (5=best match, 1=worst match, 0=no eligible snack)
+
+Does this order meet the user's instructions? Reply with meetsInstructions (true/false) and a brief reason.`;
 }
 
 function buildOptimizerPrompt(state: OrderWorkflowState): string {
@@ -43,9 +50,24 @@ function buildOptimizerPrompt(state: OrderWorkflowState): string {
 
   return `You are optimizing a snack order for an event.
 
-  Instructions from the user: "${state.instructions}"
-  YOUR INSTRUCTIONS HERE
-`;
+Instructions from the user: "${state.instructions}"
+
+Current order (does NOT meet instructions):
+${participantSummary}
+
+Total cost: ${state.totalCost} kr
+Number of different snack types: ${state.noOfSnackTypes}
+Average customer satisfaction: ${state.customerSatisfaction.toFixed(2)} / 5 (5=best match, 1=worst match, 0=no eligible snack)
+
+Optimization history (do NOT repeat these):
+${historyText}
+
+Propose new constraints to help meet the instructions:
+- excludedSnackIds: snack IDs to exclude (use the ids shown above)
+- snackMaxPrice: maximum allowed price per snack unit (or null for no limit)
+- reason: brief explanation of why these constraints should help
+
+Only use snack IDs that appear in the options above.`;
 }
 
 export const reviewAndOptimizeStep = createStep({

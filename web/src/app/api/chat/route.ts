@@ -10,7 +10,12 @@ export async function POST(req: Request) {
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      const result = await agent.stream(messages);
+      const result = await agent.stream(messages, {
+        memory: { thread: threadId, resource: "default-user" },
+        providerOptions: {
+          google: { thinkingConfig: { thinkingBudget: 0 } },
+        },
+      });
       const reader = result.fullStream.getReader();
 
       while (true) {
