@@ -2,7 +2,6 @@ import { google } from "@ai-sdk/google";
 import { Agent } from "@mastra/core/agent";
 import { Memory } from "@mastra/memory";
 import { LibSQLStore } from "@mastra/libsql";
-import { z } from "zod";
 import { GEMINI_DEFAULT } from "../../lib/geminiModels";
 
 export const chatAgent = new Agent({
@@ -26,11 +25,9 @@ export const chatAgent = new Agent({
       workingMemory: {
         enabled: true,
         scope: "resource",
-        schema: z.object({
-          userProfile: z.object({
-            name: z.string().nullable().describe("The name of the chat user, if known"),
-          }),
-        }),
+        template: `# User Profile
+        - **Name**: {{name}}
+        `,
       },
     },
   }),

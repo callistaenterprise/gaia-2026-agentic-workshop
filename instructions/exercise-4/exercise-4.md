@@ -95,6 +95,9 @@ export async function POST(req: Request) {
     execute: async ({ writer }) => {
       const result = await agent.stream(messages, {
         memory: { thread: threadId, resource: "default-user" },
+        providerOptions: {
+          google: { thinkingConfig: { thinkingBudget: 0 } },
+        },
       });
       // ... rest of stream handling unchanged ...
     },
